@@ -22,6 +22,21 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const groupCollection = client.db("groupDB").collection("groups");
+
+    app.get("/groups", async (req, res) => {
+      const result = await groupCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/groups", async (req, res) => {
+      const newGroup = req.body;
+      console.log(newGroup);
+      const result = await groupCollection.insertOne(newGroup);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -29,7 +44,7 @@ async function run() {
     );
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
